@@ -20,7 +20,7 @@ const {isAdmin} = require("../Midelwares/authenticationMW")
 router.route("/child")
     .get(isAdmin,getAllChildern)
     .post(isAdmin,insterChildValidator,resultValidator,createChild)
-    .put(isAdmin,updateChildValidator,resultValidator,updateChild);
+    .put(isAdmin,updateChildValidator,resultValidator,updateChild)
 
 
 router.route('/child/:id')

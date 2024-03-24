@@ -14,11 +14,14 @@ exports.insterValidator = [
             return true;
         }),
 
-    body("children").isArray().withMessage("children must be an array").custom(arr=>arr.length > 2).withMessage("class must have at least 2 child").custom(async(children)=>{
+    body("children").isArray().withMessage("children must be an array").custom(arr=>arr.length > 2).withMessage("class must have at least 2 child")
+    .custom(async(children)=>{
         const invalidID = [];
-        //getAll
+        const childs = (await childShema.find({},{_id:1})).map(child=>child._id);
+
         for(let childID of children){
-            const childExists = await childShema.exists({ _id: childID });
+            // const childExists = await childShema.exists({ _id: childID });
+            const childExists = childs.includes(childID);
             if(!childExists){
                 invalidID.push(childID);
             }

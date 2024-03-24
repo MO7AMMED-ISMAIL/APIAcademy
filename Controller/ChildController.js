@@ -1,4 +1,6 @@
 const childShema = require("../Model/childModel");
+const classModel = require("../Model/classModel");
+const classChema = require("../Model/classModel");
 
 exports.getAllChildern = (req, res, next) => {
     childShema.find()
@@ -55,3 +57,5 @@ exports.deleteChild = (req, res, next) => {
     })
     .catch(err=>next(err));
 };
+
+
