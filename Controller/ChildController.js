@@ -3,12 +3,57 @@ const childShema = require("../Model/childModel");
 const classShema = require("../Model/classModel");
 const cloudinary = require('../cloudinaryConfig');
 
+
+/**
+ * @swagger
+ * /api/children:
+ *   get:
+ *     summary: Get all children
+ *     description: Retrieve a list of all children.
+ *     responses:
+ *       200:
+ *         description: A list of children.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Child'
+ *       500:
+ *         description: Internal server error.
+ */
+
 exports.getAllChildern = (req, res, next) => {
     childShema.find()
     .then(data=>res.status(200).json(data))
     .catch(err=>next(err));
 };
 
+/**
+ * @swagger
+ * /api/children/{id}:
+ *   get:
+ *     summary: Get child by ID
+ *     description: Retrieve a child by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the child to retrieve.
+ *         schema:
+ *           type: Number
+ *     responses:
+ *       200:
+ *         description: The child object.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Child'
+ *       404:
+ *         description: Child not found.
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.getChildById = (req, res, next) => {
     const id = req.params.id;
@@ -22,6 +67,42 @@ exports.getChildById = (req, res, next) => {
     .catch(err=>next(err));
 };
 
+/**
+ * @swagger
+ * /api/children:
+ *   post:
+ *     summary: Create a new child
+ *     description: Create a new child with the provided details.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *               age:
+ *                 type: number
+ *               level:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Child created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Child'
+ *       400:
+ *         description: Bad request - invalid parameters.
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.createChild = async(req, res, next) => {
     try{
@@ -46,6 +127,42 @@ exports.createChild = async(req, res, next) => {
     }
 };
 
+/**
+ * @swagger
+ * /api/children:
+ *   put:
+ *     summary: Update a child
+ *     description: Update details of an existing child.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               fullName:
+ *                 type: string
+ *               age:
+ *                 type: number
+ *               level:
+ *                 type: string
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Child updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Child'
+ *       404:
+ *         description: Child not found.
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.updateChild = async(req, res, next) => {
     try{
@@ -68,6 +185,28 @@ exports.updateChild = async(req, res, next) => {
         next(err);
     }
 };
+
+/**
+ * @swagger
+ * /api/children/{id}:
+ *   delete:
+ *     summary: Delete a child
+ *     description: Delete a child by ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the child to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Child deleted successfully.
+ *       404:
+ *         description: Child not found.
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.deleteChild = async(req, res, next) => {
 

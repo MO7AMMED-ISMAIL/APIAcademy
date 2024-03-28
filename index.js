@@ -3,7 +3,8 @@ const morgn = require('morgan');
 const cors = require("cors");
 const mongosse = require("mongoose");
 require('dotenv').config();
-
+const swaggerUi = require('swagger-ui-express');
+const specs = require('./swaggerConfig');
 const upload = require("./Controller/ImageController");
 const teacherRoutes = require("./Routes/teacherRoute");
 const childRoutes = require("./Routes/childRoutes");
@@ -20,7 +21,7 @@ app.use(morgn("tiny"));
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(loginRoutes);
 app.use(registerRoutes);
 app.use(authMW);

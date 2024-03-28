@@ -2,13 +2,48 @@ const bcrypt = require('bcrypt');
 const teacherShema = require('../Model/teacherModel');
 const ClassShema = require('../Model/classModel');
 const cloudinary = require('../cloudinaryConfig');
-
+/**
+ * @swagger
+ * /api/teachers:
+ *   get:
+ *     summary: Get all teachers
+ *     description: Retrieve a list of all teachers.
+ *     responses:
+ *       200:
+ *         description: A list of teachers.
+ *       500:
+ *         description: Internal server error MW Authitcated.
+ */
 
 exports.getAllTeachers = (req, res,next) => {
   teacherShema.find()
   .then(data=>res.status(200).json(data))
   .catch(err=>next(err));
 }
+
+/**
+ * @swagger
+ * /api/teachers/{id}:
+ *   get:
+ *     summary: Get teacher by ID
+ *     description: Retrieve a teacher by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the teacher to retrieve.
+ *         schema:
+ *           type: MongoID
+ *     responses:
+ *       200:
+ *         description: 
+ *            The teacher object {id , name , email , password , image , role}.
+ *             if is login is Admin 
+ *       404:
+ *         description: Teacher not found.
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.getTeacherById = (req, res,next) => {
   const id = req.params.id;
@@ -21,6 +56,38 @@ exports.getTeacherById = (req, res,next) => {
   })
   .catch(err=>next(err));
 }
+
+/**
+ * @swagger
+ * /api/teachers:
+ *   post:
+ *     summary: Create a new teacher
+ *     description: Create a new teacher with the provided details.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Teacher created successfully.
+ *       400:
+ *         description: Bad request - invalid parameters.
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.createTeacher = async(req, res, next) => {
   //res.status(200).json({body: req.body ,file: req.file });
@@ -45,6 +112,58 @@ exports.createTeacher = async(req, res, next) => {
   }
 };
 
+
+/**
+ * @swagger
+ * /api/teachers:
+ *   put:
+ *     summary: Update a teacher
+ *     description: Update details of an existing teacher.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               _id:
+ *                 type: MongoId
+ *                 description: The ID of the teacher to update.
+ *                 required: true
+ *               fullName:
+ *                 type: string
+ *                 description: The updated full name of the teacher.
+ *                 required: false
+ *               email:
+ *                 type: string (email)
+ *                 description: The updated email address of the teacher.
+ *                 required: false
+ *               password:
+ *                 type: string
+ *                 description: The updated password of the teacher.
+ *                 required: false
+ *               file:
+ *                 type: file
+ *                 description: Optional. The updated image file of the teacher.
+ *                 required: false
+ *     responses:
+ *       200:
+ *         description: Teacher updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: A message confirming the update.
+ *                 data:
+ *                   $ref: '#/components/schemas/Teacher'
+ *       404:
+ *         description: Teacher not found.
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.updateTeacher = async(req, res, next) => {
   //res.status(200).json({body: req.body ,file: req.file });
@@ -77,6 +196,27 @@ exports.updateTeacher = async(req, res, next) => {
   }
 };
 
+/**
+ * @swagger
+ * /api/teachers/supervisors:
+ *   get:
+ *     summary: Get all supervisors
+ *     description: Retrieve a list of all supervisors Data.
+ *     responses:
+ *       200:
+ *         description: A list of supervisors.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 supervisors:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Teacher'
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.getAllsupervisors = (req, res, next) => {
   ClassShema.find({})
@@ -93,6 +233,35 @@ exports.getAllsupervisors = (req, res, next) => {
   .catch(err=>next(err));
 }
 
+/**
+ * @swagger
+ * /api/teachers/{id}:
+ *   delete:
+ *     summary: Delete a teacher
+ *     description: Delete a teacher by ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the teacher to delete.
+ *         schema:
+ *           type: mongoID
+ *     responses:
+ *       200:
+ *         description: Teacher deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 Message:
+ *                   type: string
+ *                   description: A message confirming the deletion.
+ *       404:
+ *         description: Teacher not found.
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.deleteTeacher = async(req, res, next) => {
   try{
@@ -108,6 +277,50 @@ exports.deleteTeacher = async(req, res, next) => {
     next(err);
   }
 }
+
+
+/**
+ * @swagger
+ * /api/teachers/changePass:
+ *   post:
+ *     summary: Change teacher's password
+ *     description: Change the password of a teacher.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               _id:
+ *                 type: MangoId
+ *                 description: The ID of the teacher whose password is to be changed.
+ *               oldPassword:
+ *                 type: string
+ *                 description: The current password of the teacher.
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password for the teacher.
+ *     responses:
+ *       200:
+ *         description: Password changed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: A message confirming the password change.
+ *                 updatePass:
+ *                   $ref: '#/components/schemas/Teacher'
+ *       401:
+ *         description: Old password is not valid.
+ *       404:
+ *         description: Teacher not found.
+ *       500:
+ *         description: Internal server error.
+ */
 
 exports.changePassword = async (req , res ,next)=>{
   try{
