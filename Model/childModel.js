@@ -18,7 +18,8 @@ const childSchema = new mongoose.Schema({
         enum:['PreKG', 'KG1', 'KG2'],
         required: true
     },
-    address:addressSchema
+    address:addressSchema,
+    image: {type: String, required: true},
 });
 
 childSchema.plugin(autoIncrement.plugin, {

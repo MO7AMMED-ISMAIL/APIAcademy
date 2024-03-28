@@ -1,12 +1,7 @@
-const { body } = require("express-validator");
+const { body,param} = require("express-validator");
 
-/**
- * : _id(Number), fullName, age , level (one of PreKG,KG1,KG2), address
-(city,street and building)
- */
 
 exports.insterChildValidator = [
-    //body('_id').isInt().withMessage('id must be a number'),
 
     body('fullName').isString().isLength({ min: 3 }).withMessage('fullName must be at least 3 characters long'),
 
@@ -17,10 +12,12 @@ exports.insterChildValidator = [
     body('address').isObject().withMessage('address must be an object'),
 
     body('address.city').isLength({ min: 3 }).withMessage('city must be at least 3 characters long'),
+
+    body('password').isLength({ min: 6 }).withMessage('password must be at least 6 characters long'),
 ];
 
 exports.updateChildValidator = [
-    //body('id').isInt().withMessage('id must be a number'),
+    body('id').isInt().withMessage('id must be a number'),
 
     body('fullName').isString().optional().isLength({ min: 3 }).withMessage('fullName must be at least 3 characters long'),
 
@@ -31,5 +28,11 @@ exports.updateChildValidator = [
     body('address').optional().isObject().withMessage('address must be an object'),
 
     body('address.city').optional().isLength({ min: 3 }).withMessage('city must be at least 3 characters long'),
+
+    body('password').optional().isLength({ min: 6 }).withMessage('password must be at least 6 characters long'),
 ];
 
+
+exports.validatorIdParams = [
+    param('id').isInt().withMessage('id is not valid'),
+];

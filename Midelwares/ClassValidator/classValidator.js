@@ -1,6 +1,7 @@
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 const teacherShema = require("../../Model/teacherModel");
 const childShema = require("../../Model/childModel");
+const classShema = require("../../Model/classModel");
 
 exports.insterValidator = [
     //body("id").isInt().withMessage("id must be a number"),
@@ -20,7 +21,6 @@ exports.insterValidator = [
         const childs = (await childShema.find({},{_id:1})).map(child=>child._id);
 
         for(let childID of children){
-            // const childExists = await childShema.exists({ _id: childID });
             const childExists = childs.includes(childID);
             if(!childExists){
                 invalidID.push(childID);
@@ -34,7 +34,7 @@ exports.insterValidator = [
 ];
 
 exports.updateValidator = [
-    //body("id").isInt().withMessage("id must be a number"),
+    body("id").isInt().withMessage("id must be a number"),
 
     body("name").optional().isString().isLength({ min: 3 }).withMessage("name must be at least 3 chars long"),
 
@@ -61,3 +61,5 @@ exports.updateValidator = [
         return true;
     }),
 ];
+
+
