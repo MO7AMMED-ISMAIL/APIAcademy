@@ -2,17 +2,47 @@ const bcrypt = require('bcrypt');
 const teacherShema = require('../Model/teacherModel');
 const ClassShema = require('../Model/classModel');
 const cloudinary = require('../cloudinaryConfig');
+
+/**
+ * @swagger
+ * tags:
+ *   name: Teachers
+ *   description: API endpoints for managing teachers
+ */
+
+
 /**
  * @swagger
  * /api/teachers:
  *   get:
  *     summary: Get all teachers
+ *     tags: [Teachers]
  *     description: Retrieve a list of all teachers.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+*       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: A list of teachers.
+ *         description: Successful operation.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               example:
+ *                 - id: 786985c24vv56589
+ *                   FullName: mohamed_ismail
+ *                   role: admin
+ *                   password: $2b$10$R0htEDimfE86Og.Kcin9fuqoQ7OhTHPVFAJFo0id1EdiRqWDOEc9C
+ *                   email: mo7ismail@gmail.com
+ *                   image: https://res.cloudinary.com/djqpidvlz/image/upload/v1711542078/  gx69xiqxgklfuoxensdn.png
  *       500:
- *         description: Internal server error MW Authitcated.
+ *         description: Internal server error.
  */
 
 exports.getAllTeachers = (req, res,next) => {
@@ -25,22 +55,50 @@ exports.getAllTeachers = (req, res,next) => {
  * @swagger
  * /api/teachers/{id}:
  *   get:
- *     summary: Get teacher by ID
- *     description: Retrieve a teacher by its ID.
+ *     summary: Get a teacher by ID
+ *     tags: [Teachers]
+ *     description: Retrieve a teacher by their ID.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: params
  *         name: id
  *         required: true
- *         description: ID of the teacher to retrieve.
+ *         description: ID of the teacher to get Info
  *         schema:
- *           type: MongoID
+ *           type: string
+ *           format: mongoId
+ *           example: 507f1f77bcf86cd799439011
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: 
- *            The teacher object {id , name , email , password , image , role}.
- *             if is login is Admin 
+ *         description: Successful operation.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                   id: 786985c24vv56589
+ *                   FullName: mohamed_ismail
+ *                   role: admin
+ *                   password: $2b$10$R0htEDimfE86Og.Kcin9fuqoQ7OhTHPVFAJFo0id1EdiRqWDOEc9C
+ *                   email: mo7ismail@gmail.com
+ *                   image: https://res.cloudinary.com/djqpidvlz/image/upload/v1711542078/  gx69xiqxgklfuoxensdn.png
  *       404:
  *         description: Teacher not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: string
+ *                   example: Teacher not found
  *       500:
  *         description: Internal server error.
  */
@@ -62,29 +120,63 @@ exports.getTeacherById = (req, res,next) => {
  * /api/teachers:
  *   post:
  *     summary: Create a new teacher
- *     description: Create a new teacher with the provided details.
+ *     tags: [Teachers]
+ *     description: Create a new teacher with the provided information.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               fullName:
- *                 type: string
+ *                 type: mongoDB
  *               email:
  *                 type: string
+ *                 format: email
  *               password:
  *                 type: string
  *               image:
- *                 type: string
+ *                 type: file
+ *                 format: binary
  *               role:
  *                 type: string
+ *             required:
+ *               - fullName
+ *               - email
+ *               - password
+ *               - image
+ *               - role
  *     responses:
  *       201:
  *         description: Teacher created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: string
+ *                   example: Teacher Created Susseccfuly
  *       400:
- *         description: Bad request - invalid parameters.
+ *         description: Bad request. No image file received.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: No image file received.
  *       500:
  *         description: Internal server error.
  */
@@ -112,40 +204,45 @@ exports.createTeacher = async(req, res, next) => {
   }
 };
 
-
 /**
  * @swagger
  * /api/teachers:
  *   put:
  *     summary: Update a teacher
- *     description: Update details of an existing teacher.
+ *     tags: [Teachers]
+ *     description: Update a teacher with the provided information.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               _id:
- *                 type: MongoId
- *                 description: The ID of the teacher to update.
- *                 required: true
+ *                 type: string
+ *                 format: mongoId
+ *                 example: 507f1f77bcf86cd799439011
  *               fullName:
  *                 type: string
- *                 description: The updated full name of the teacher.
- *                 required: false
  *               email:
- *                 type: string (email)
- *                 description: The updated email address of the teacher.
- *                 required: false
+ *                 type: string
+ *                 format: email
  *               password:
  *                 type: string
- *                 description: The updated password of the teacher.
- *                 required: false
- *               file:
+ *               image:
  *                 type: file
- *                 description: Optional. The updated image file of the teacher.
- *                 required: false
+ *                 format: binary
+ *             required:
+ *               - _id
  *     responses:
  *       200:
  *         description: Teacher updated successfully.
@@ -156,11 +253,17 @@ exports.createTeacher = async(req, res, next) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   description: A message confirming the update.
- *                 data:
- *                   $ref: '#/components/schemas/Teacher'
+ *                   example: Teacher Updated Successfully
  *       404:
  *         description: Teacher not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: string
+ *                   example: Teacher Not Found
  *       500:
  *         description: Internal server error.
  */
@@ -200,11 +303,21 @@ exports.updateTeacher = async(req, res, next) => {
  * @swagger
  * /api/teachers/supervisors:
  *   get:
- *     summary: Get all supervisors
- *     description: Retrieve a list of all supervisors Data.
+ *     summary: Get all teachers supervisors
+ *     tags: [Teachers]
+ *     description: Delete a teacher by ID. Requires authentication via bearer token.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: A list of supervisors.
+ *         description: Successful operation.
  *         content:
  *           application/json:
  *             schema:
@@ -212,12 +325,27 @@ exports.updateTeacher = async(req, res, next) => {
  *               properties:
  *                 supervisors:
  *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Teacher'
+ *                   items: 
+ *                     type: object
+ *                     properties: 
+ *                       _id: 
+ *                         type: string
+ *                         description: The ID of the supervisor.
+ *                       fullName:
+ *                         type: string
+ *                         description: The full name of the supervisor.
+ *                   example:
+ *                     - _id: "6602fcdbbf4bd75cc29aafed"
+ *                       fullName: "Mohamed Ismail89"
+ *                     - _id: "66036147d30a76ce62e9c79f"
+ *                       fullName: "ahmed Adel"
+ *                     - _id: "6605805e6cef930d75465651"
+ *                       fullName: "Nader Ahmed"
+ *                     - _id: "6605805e6cef930d75465651"
+ *                       fullName: "Nader Ahmed"
  *       500:
  *         description: Internal server error.
  */
-
 exports.getAllsupervisors = (req, res, next) => {
   ClassShema.find({})
   .populate(
@@ -238,14 +366,25 @@ exports.getAllsupervisors = (req, res, next) => {
  * /api/teachers/{id}:
  *   delete:
  *     summary: Delete a teacher
- *     description: Delete a teacher by ID.
+ *     tags: [Teachers]
+ *     description: Delete a teacher by ID. Requires authentication via bearer token.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: body
  *         name: id
  *         required: true
  *         description: ID of the teacher to delete.
  *         schema:
- *           type: mongoID
+ *           type: string
+ *           format: mongoId
+ *           example: 507f1f77bcf86cd799439011
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Teacher deleted successfully.
@@ -256,9 +395,19 @@ exports.getAllsupervisors = (req, res, next) => {
  *               properties:
  *                 Message:
  *                   type: string
- *                   description: A message confirming the deletion.
+ *                   description: A message confirming the deletion of the teacher.
+ *                   example: Teacher is deleted Successfully
  *       404:
- *         description: Teacher not found.
+ *         description: Teacher Not Found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 Message:
+ *                   type: string
+ *                   description: A message confirming the teacher not found in the database.
+ *                   example: Teacher Not Found
  *       500:
  *         description: Internal server error.
  */
@@ -268,7 +417,7 @@ exports.deleteTeacher = async(req, res, next) => {
     const id = req.params.id;
     const deletedTeacher = await teacherShema.findById(id);
     if(!deletedTeacher){
-      res.status(200).json({"Message": "the Teacher Is not found"});
+      res.status(404).json({"Message": "the Teacher Is not found"});
     }
     await ClassShema.updateMany({ supervisor: id }, { supervisor: req.token._id});
     await teacherShema.findByIdAndDelete(id);
@@ -278,13 +427,22 @@ exports.deleteTeacher = async(req, res, next) => {
   }
 }
 
-
 /**
  * @swagger
- * /api/teachers/changePass:
+ * /api/teachers/changePassword:
  *   post:
  *     summary: Change teacher's password
- *     description: Change the password of a teacher.
+ *     tags: [Teachers]
+ *     description: Change the password of a teacher. Requires authentication via bearer token.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -293,8 +451,8 @@ exports.deleteTeacher = async(req, res, next) => {
  *             type: object
  *             properties:
  *               _id:
- *                 type: MangoId
- *                 description: The ID of the teacher whose password is to be changed.
+ *                 type: mongoDB
+ *                 description: The ID of the teacher.
  *               oldPassword:
  *                 type: string
  *                 description: The current password of the teacher.
@@ -312,12 +470,30 @@ exports.deleteTeacher = async(req, res, next) => {
  *                 message:
  *                   type: string
  *                   description: A message confirming the password change.
+ *                   example: change password sucssfuly
  *                 updatePass:
- *                   $ref: '#/components/schemas/Teacher'
+ *                   type: object
+ *                   description: The updated teacher object.
  *       401:
- *         description: Old password is not valid.
+ *         description: Unauthorized - Old password is not valid.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: the old password is not valid.
  *       404:
  *         description: Teacher not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: The Teacher Is Not define.
  *       500:
  *         description: Internal server error.
  */

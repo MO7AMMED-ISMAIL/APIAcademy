@@ -20,6 +20,8 @@ async function checkDuplicateChildren(childrenToAdd , classId=0){
 }
 
 
+
+
 exports.getAllClasses = (req,res,next)=>{
     classShema.find({})
     .populate({path:'supervisor', select: {_id:0,fullName: 1}})

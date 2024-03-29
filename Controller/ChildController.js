@@ -3,22 +3,45 @@ const childShema = require("../Model/childModel");
 const classShema = require("../Model/classModel");
 const cloudinary = require('../cloudinaryConfig');
 
+/**
+ * @swagger
+ *  tags:
+ *   name: Childs
+ *   description: API endpoints for managing Childs
+ */
 
 /**
  * @swagger
- * /api/children:
+ * /api/child:
  *   get:
  *     summary: Get all children
+ *     tags: [Childs]
  *     description: Retrieve a list of all children.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: A list of children.
+ *         description: Successful operation.
  *         content:
  *           application/json:
  *             schema:
  *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Child'
+ *               example:
+ *                - _id: 26
+ *                  fullName: amir
+ *                  age: 5
+ *                  level: KG1
+ *                  address:
+ *                    city: cairo
+ *                    street: 11 Main St
+ *                    building: Apt 103
  *       500:
  *         description: Internal server error.
  */
@@ -31,26 +54,53 @@ exports.getAllChildern = (req, res, next) => {
 
 /**
  * @swagger
- * /api/children/{id}:
+ * /api/Childs/{id}:
  *   get:
- *     summary: Get child by ID
- *     description: Retrieve a child by its ID.
+ *     summary: Get a teacher by ID
+ *     tags: [Childs]
+ *     description: Retrieve a Child by their ID.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: params
  *         name: id
  *         required: true
- *         description: ID of the child to retrieve.
+ *         description: ID of the teacher to get Info
  *         schema:
- *           type: Number
+ *           type: number
+ *           example: 5
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: The child object.
+ *         description: Successful operation.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Child'
+ *               type: object
+ *               example:
+ *                - _id: 26
+ *                  fullName: amir
+ *                  age: 5
+ *                  level: KG1
+ *                  address:
+ *                    city: cairo
+ *                    street: 11 Main St
+ *                    building: Apt 103
  *       404:
- *         description: Child not found.
+ *         description: Teacher not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: string
+ *                   example: Teacher not found
  *       500:
  *         description: Internal server error.
  */
@@ -69,10 +119,22 @@ exports.getChildById = (req, res, next) => {
 
 /**
  * @swagger
- * /api/children:
+ * /api/childs:
  *   post:
  *     summary: Create a new child
- *     description: Create a new child with the provided details.
+ *     tags: [Childs]
+ *     description: Create a new child with provided information.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
@@ -82,24 +144,57 @@ exports.getChildById = (req, res, next) => {
  *             properties:
  *               fullName:
  *                 type: string
+ *                 description: The full name of the child.
  *               age:
  *                 type: number
+ *                 description: The age of the child.
  *               level:
- *                 type: string
+ *                 type: enum
+ *                 format: [ PreKEG  KG1  KG2 ]
+ *                 description: The level of the child.
  *               address:
- *                 type: string
- *               file:
- *                 type: string
+ *                 type: object
+ *                 format: {city- street- buliding}
+ *                 example: {city:mans,street:123,buliding:any}
+ *                 properties:
+ *                   city:
+ *                     type: string
+ *                     description: The city of the child's address.
+ *                   street:
+ *                     type: string
+ *                     description: The street of the child's address.
+ *                   building:
+ *                     type: string
+ *                     description: The building of the child's address.
+ *               image:
+ *                 type: file
  *                 format: binary
+ *                 description: The image of the child.
  *     responses:
  *       201:
  *         description: Child created successfully.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Child'
+ *               type: object
+ *               properties:
+ *                 Message:
+ *                   type: string
+ *                   description: A message confirming the child creation.
+ *                   example: Child created successfully
+ *                 data:
+ *                   type: object
+ *                   description: The created child object.
  *       400:
- *         description: Bad request - invalid parameters.
+ *         description: Bad request - No image file received.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message indicating no image file received.
  *       500:
  *         description: Internal server error.
  */
@@ -129,10 +224,22 @@ exports.createChild = async(req, res, next) => {
 
 /**
  * @swagger
- * /api/children:
+ * /api/childs:
  *   put:
  *     summary: Update a child
- *     description: Update details of an existing child.
+ *     tags: [Childs]
+ *     description: Update information of a child by ID.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
@@ -141,25 +248,59 @@ exports.createChild = async(req, res, next) => {
  *             type: object
  *             properties:
  *               id:
- *                 type: string
+ *                 type: number
+ *                 description: The ID of the child to update.
  *               fullName:
  *                 type: string
+ *                 description: The full name of the child.
  *               age:
  *                 type: number
+ *                 description: The age of the child.
  *               level:
  *                 type: string
- *               file:
- *                 type: string
+ *                 enum: [ PreKEG, KG1, KG2 ]
+ *                 description: The level of the child.
+ *               address:
+ *                 type: object
+ *                 properties:
+ *                   city:
+ *                     type: string
+ *                     description: The city of the child's address.
+ *                   street:
+ *                     type: string
+ *                     description: The street of the child's address.
+ *                   building:
+ *                     type: string
+ *                     description: The building of the child's address.
+ *               image:
+ *                 type: file
  *                 format: binary
+ *                 description: The image of the child.
  *     responses:
  *       200:
  *         description: Child updated successfully.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Child'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: A message confirming the child update.
+ *                   example: Child updated successfully
+ *                 data:
+ *                   type: object
+ *                   description: The updated child object.
  *       404:
  *         description: Child not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: string
+ *                   example: Child not found
  *       500:
  *         description: Internal server error.
  */
@@ -188,22 +329,50 @@ exports.updateChild = async(req, res, next) => {
 
 /**
  * @swagger
- * /api/children/{id}:
+ * /api/childs/{id}:
  *   delete:
  *     summary: Delete a child
+ *     tags: [Childs]
  *     description: Delete a child by ID.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - in: path
+ *       - in: header
+ *         name: Authorization
+ *         description: Access token (Bearer token)
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: params
  *         name: id
  *         required: true
  *         description: ID of the child to delete.
  *         schema:
- *           type: string
+ *           type: number
+ *           example: 1
  *     responses:
  *       200:
  *         description: Child deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 Message:
+ *                   type: string
+ *                   description: A message confirming the deletion of the child.
+ *                   example: Child deleted successfully
  *       404:
  *         description: Child not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 Message:
+ *                   type: string
+ *                   description: A message indicating the child was not found.
+ *                   example: Child not found
  *       500:
  *         description: Internal server error.
  */
