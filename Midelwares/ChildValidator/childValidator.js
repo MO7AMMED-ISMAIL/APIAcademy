@@ -13,7 +13,6 @@ exports.insterChildValidator = [
 
     body('address.city').isLength({ min: 3 }).withMessage('city must be at least 3 characters long'),
 
-    body('password').isLength({ min: 6 }).withMessage('password must be at least 6 characters long'),
 ];
 
 exports.updateChildValidator = [
@@ -29,7 +28,6 @@ exports.updateChildValidator = [
 
     body('address.city').optional().isLength({ min: 3 }).withMessage('city must be at least 3 characters long'),
 
-    body('password').optional().isLength({ min: 6 }).withMessage('password must be at least 6 characters long'),
 ];
 
 

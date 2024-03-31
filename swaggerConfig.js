@@ -4,19 +4,31 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-        title: 'API Accademy Docs',
-        version: '1.0.0',
-        description: 'Description of your API',
+            title: 'API Accademy Docs',
+            version: '1.0.0',
+            description: 'Description of your API',
         },
         servers: [
-        {
-            url: 'http://localhost:8080', // Change this to your server URL
-        },
+            {
+                url: 'http://localhost:8080', // Change this to your server URL
+            },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'apiKey',
+                    name: 'Authorization',
+                    scheme: 'bearer',
+                    in: 'header',
+                },
+            },
+        },
+        security: [{ bearerAuth: [] }],
     },
-    apis: ['./Controller/*.js','./routes/registerRoutes.js'], 
+    apis: ['./Controller/*.js','./routes/registerRoutes.js'],
 };
 
 const specs = swaggerJsdoc(options);
 
 module.exports = specs;
+

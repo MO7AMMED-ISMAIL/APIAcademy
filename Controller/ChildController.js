@@ -12,20 +12,11 @@ const cloudinary = require('../cloudinaryConfig');
 
 /**
  * @swagger
- * /api/child:
+ * /child:
  *   get:
  *     summary: Get all children
  *     tags: [Childs]
  *     description: Retrieve a list of all children.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Successful operation.
@@ -54,7 +45,7 @@ exports.getAllChildern = (req, res, next) => {
 
 /**
  * @swagger
- * /api/Childs/{id}:
+ *  /child/{id}:
  *   get:
  *     summary: Get a teacher by ID
  *     tags: [Childs]
@@ -62,19 +53,14 @@ exports.getAllChildern = (req, res, next) => {
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: params
+ *       - in: path
  *         name: id
  *         required: true
  *         description: ID of the teacher to get Info
  *         schema:
  *           type: number
  *           example: 5
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
+ *           
  *     responses:
  *       200:
  *         description: Successful operation.
@@ -119,20 +105,11 @@ exports.getChildById = (req, res, next) => {
 
 /**
  * @swagger
- * /api/childs:
+ *  /child:
  *   post:
  *     summary: Create a new child
  *     tags: [Childs]
  *     description: Create a new child with provided information.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     consumes:
  *       - multipart/form-data
  *     requestBody:
@@ -149,23 +126,15 @@ exports.getChildById = (req, res, next) => {
  *                 type: number
  *                 description: The age of the child.
  *               level:
- *                 type: enum
- *                 format: [ PreKEG  KG1  KG2 ]
+ *                 type: string
+ *                 enum: [ PreKG , KG1 , KG2 ]
  *                 description: The level of the child.
- *               address:
- *                 type: object
- *                 format: {city- street- buliding}
- *                 example: {city:mans,street:123,buliding:any}
- *                 properties:
- *                   city:
- *                     type: string
- *                     description: The city of the child's address.
- *                   street:
- *                     type: string
- *                     description: The street of the child's address.
- *                   building:
- *                     type: string
- *                     description: The building of the child's address.
+ *               address[city]:
+ *                 type: string
+ *               address[street]:
+ *                 type: string
+ *               address[building]:
+ *                 type: string
  *               image:
  *                 type: file
  *                 format: binary
@@ -224,20 +193,11 @@ exports.createChild = async(req, res, next) => {
 
 /**
  * @swagger
- * /api/childs:
+ * /child:
  *   put:
  *     summary: Update a child
  *     tags: [Childs]
  *     description: Update information of a child by ID.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     consumes:
  *       - multipart/form-data
  *     requestBody:
@@ -258,20 +218,14 @@ exports.createChild = async(req, res, next) => {
  *                 description: The age of the child.
  *               level:
  *                 type: string
- *                 enum: [ PreKEG, KG1, KG2 ]
+ *                 enum: [ PreKG , KG1 , KG2 ]
  *                 description: The level of the child.
- *               address:
- *                 type: object
- *                 properties:
- *                   city:
- *                     type: string
- *                     description: The city of the child's address.
- *                   street:
- *                     type: string
- *                     description: The street of the child's address.
- *                   building:
- *                     type: string
- *                     description: The building of the child's address.
+ *               address[city]:
+ *                 type: string
+ *               address[street]:
+ *                 type: string
+ *               address[building]:
+ *                 type: string
  *               image:
  *                 type: file
  *                 format: binary
@@ -329,7 +283,7 @@ exports.updateChild = async(req, res, next) => {
 
 /**
  * @swagger
- * /api/childs/{id}:
+ * /child/{id}:
  *   delete:
  *     summary: Delete a child
  *     tags: [Childs]
@@ -337,19 +291,13 @@ exports.updateChild = async(req, res, next) => {
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
- *       - in: params
+ *       - in: path
  *         name: id
  *         required: true
- *         description: ID of the child to delete.
+ *         description: ID of the teacher to get Info
  *         schema:
  *           type: number
- *           example: 1
+ *           example: 5
  *     responses:
  *       200:
  *         description: Child deleted successfully.

@@ -13,20 +13,13 @@ const cloudinary = require('../cloudinaryConfig');
 
 /**
  * @swagger
- * /api/teachers:
+ * /teachers:
  *   get:
  *     summary: Get all teachers
  *     tags: [Teachers]
  *     description: Retrieve a list of all teachers.
  *     security:
  *       - bearerAuth: []
- *     parameters:
-*       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Successful operation.
@@ -53,7 +46,7 @@ exports.getAllTeachers = (req, res,next) => {
 
 /**
  * @swagger
- * /api/teachers/{id}:
+ * /teachers/{id}:
  *   get:
  *     summary: Get a teacher by ID
  *     tags: [Teachers]
@@ -61,7 +54,7 @@ exports.getAllTeachers = (req, res,next) => {
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: params
+ *       - in: path
  *         name: id
  *         required: true
  *         description: ID of the teacher to get Info
@@ -69,12 +62,6 @@ exports.getAllTeachers = (req, res,next) => {
  *           type: string
  *           format: mongoId
  *           example: 507f1f77bcf86cd799439011
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Successful operation.
@@ -117,20 +104,13 @@ exports.getTeacherById = (req, res,next) => {
 
 /**
  * @swagger
- * /api/teachers:
+ * /teachers:
  *   post:
  *     summary: Create a new teacher
  *     tags: [Teachers]
  *     description: Create a new teacher with the provided information.
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -139,7 +119,7 @@ exports.getTeacherById = (req, res,next) => {
  *             type: object
  *             properties:
  *               fullName:
- *                 type: mongoDB
+ *                 type: string
  *               email:
  *                 type: string
  *                 format: email
@@ -150,6 +130,7 @@ exports.getTeacherById = (req, res,next) => {
  *                 format: binary
  *               role:
  *                 type: string
+ *                 enum: [teacher , admin]
  *             required:
  *               - fullName
  *               - email
@@ -206,20 +187,13 @@ exports.createTeacher = async(req, res, next) => {
 
 /**
  * @swagger
- * /api/teachers:
+ * /teachers:
  *   put:
  *     summary: Update a teacher
  *     tags: [Teachers]
  *     description: Update a teacher with the provided information.
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -301,20 +275,13 @@ exports.updateTeacher = async(req, res, next) => {
 
 /**
  * @swagger
- * /api/teachers/supervisors:
+ * /teachers/supervisors:
  *   get:
  *     summary: Get all teachers supervisors
  *     tags: [Teachers]
  *     description: Delete a teacher by ID. Requires authentication via bearer token.
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Successful operation.
@@ -363,7 +330,7 @@ exports.getAllsupervisors = (req, res, next) => {
 
 /**
  * @swagger
- * /api/teachers/{id}:
+ * /teachers/{id}:
  *   delete:
  *     summary: Delete a teacher
  *     tags: [Teachers]
@@ -371,7 +338,7 @@ exports.getAllsupervisors = (req, res, next) => {
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: body
+ *       - in: path
  *         name: id
  *         required: true
  *         description: ID of the teacher to delete.
@@ -379,12 +346,6 @@ exports.getAllsupervisors = (req, res, next) => {
  *           type: string
  *           format: mongoId
  *           example: 507f1f77bcf86cd799439011
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Teacher deleted successfully.
@@ -429,20 +390,13 @@ exports.deleteTeacher = async(req, res, next) => {
 
 /**
  * @swagger
- * /api/teachers/changePassword:
+ * /teachers/changePass:
  *   post:
  *     summary: Change teacher's password
  *     tags: [Teachers]
  *     description: Change the password of a teacher. Requires authentication via bearer token.
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         description: Access token (Bearer token)
- *         required: true
- *         schema:
- *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -451,14 +405,20 @@ exports.deleteTeacher = async(req, res, next) => {
  *             type: object
  *             properties:
  *               _id:
- *                 type: mongoDB
+ *                 type: string
+ *                 formate: mongoId
  *                 description: The ID of the teacher.
+ *                 example: 66036147d30a76cgge62e9c7
  *               oldPassword:
  *                 type: string
  *                 description: The current password of the teacher.
  *               newPassword:
  *                 type: string
  *                 description: The new password for the teacher.
+ *             required:
+ *               - _id
+ *               - oldPassword
+ *               - newPassword
  *     responses:
  *       200:
  *         description: Password changed successfully.

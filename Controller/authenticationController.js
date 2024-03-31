@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 
 /**
  * @swagger
- * /api/auth/login:
+ * /login:
  *   post:
  *     summary: Log in as a teacher
  *     tags: [Authentication]
