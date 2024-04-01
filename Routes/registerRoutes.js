@@ -9,7 +9,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /api/register:
+ *  /register:
  *   post:
  *     summary: Create a new teacher
  *     tags: [Register]
@@ -33,6 +33,7 @@ const router = express.Router();
  *                 format: binary
  *               role:
  *                 type: string
+ *                 enum: [teacher]
  *             required:
  *               - fullName
  *               - email
